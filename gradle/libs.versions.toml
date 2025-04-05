@@ -1,5 +1,7 @@
 [versions]
 agp = "8.7.2"
+composeVersion = "1.0.0-beta01"
+coreSplashscreenVersion = "1.0.1"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -11,8 +13,17 @@ composeBom = "2024.04.01"
 navigationCompose = "2.8.8"
 retrofit = "2.11.0"
 converterGson = "2.11.0"
+daggerHilt = "2.48"
+hiltAndroid = "2.48"
+hiltCompiler = "1.1.0-alpha01"
 
 [libraries]
+androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltCompiler" }
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltCompiler" }
+core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreenVersion" }
+glide-compose = { module = "com.github.bumptech.glide:compose", version.ref = "composeVersion" }
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroid" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -35,4 +46,5 @@ converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "daggerHilt" }
 

@@ -2,4 +2,12 @@
 <resources>
 
     <style name="Theme.WhatsApp" parent="android:Theme.Material.Light.NoActionBar" />
+
+        <style name="Theme.WhatsApp.Splash" parent="Theme.SplashScreen">
+            <item name="windowSplashScreenBackground">#FFFFFF</item> <!-- Background color -->
+            <item name="windowSplashScreenAnimatedIcon">@mipmap/app_icon</item> <!-- Your app icon -->
+            <item name="postSplashScreenTheme">@style/Theme.WhatsApp.Splash</item>
+        </style>
+
 </resources>
+

@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,7 +22,6 @@ import com.himanshu.whatsapp.ui.theme.components.ChatCardData
 import com.himanshu.whatsapp.ui.theme.components.ChatScreenTopBar
 import com.himanshu.whatsapp.ui.theme.components.Message
 import com.himanshu.whatsapp.ui.theme.components.MessageCard
-import com.himanshu.whatsapp.ui.theme.components.MessageStatus
 import com.himanshu.whatsapp.ui.theme.components.SendMessageButton
 import kotlinx.coroutines.launch
 

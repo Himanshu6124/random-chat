@@ -25,7 +25,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.createGraph
 import com.himanshu.whatsapp.ui.theme.screens.ChatScreen
-import com.himanshu.whatsapp.ui.theme.screens.HomeScreen
+import com.himanshu.whatsapp.ui.theme.screens.ConversationScreen
+import com.himanshu.whatsapp.ui.theme.screens.OnboardingScreen
+import com.himanshu.whatsapp.ui.theme.screens.SplashScreen
 
 @Composable
 fun BottomNavigation(navController: NavHostController, modifier: Modifier) {
@@ -33,10 +35,22 @@ fun BottomNavigation(navController: NavHostController, modifier: Modifier) {
     val navGraph = navController.createGraph(
         startDestination = Screen.Home.route,
     ) {
-        composable(route = Screen.Home.route) {
-            HomeScreen(
+        composable(route = Screen.SplashScreen.route) {
+            SplashScreen(
+                navController = navController
+            )
+        }
+
+        composable(route = Screen.Conversations.route) {backStackEntry->
+            ConversationScreen(
                 navController = navController,
                 modifier = modifier
+            )
+        }
+
+        composable(route = Screen.Home.route) {
+            OnboardingScreen(
+                navController = navController
             )
         }
         composable(route = "${Screen.ChatDetail.route}/{id}") {

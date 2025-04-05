@@ -92,7 +92,9 @@ fun PrevChatCard() {
         profilePic = R.drawable.user_profile,
         lastMessageTime = "Sunday"
     )
-//    ChatCard(chat)
+    ChatCard(chat){
+
+    }
 }
 
 @Composable

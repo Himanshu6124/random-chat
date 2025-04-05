@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.dagger.hilt.android)
+    id("com.google.devtools.ksp")
     id("kotlin-parcelize")
 }
 
@@ -42,6 +44,16 @@ android {
 
 dependencies {
 
+    //Dagger-Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+    ksp(libs.androidx.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+    implementation (libs.glide.compose)
+    implementation ("androidx.datastore:datastore-preferences:1.0.0")
+    implementation ("androidx.datastore:datastore:1.0.0")
+    implementation ("com.google.code.gson:gson:2.8.9")
+    implementation (libs.core.splashscreen)
     implementation (libs.converter.gson)
     implementation(libs.retrofit)
     implementation (libs.androidx.navigation.compose)
