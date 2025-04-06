@@ -1,5 +1,7 @@
 package com.himanshu.whatsapp.ui.theme.viewmodels
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -8,6 +10,8 @@ import com.himanshu.whatsapp.data.repository.ChatRepository
 import com.himanshu.whatsapp.ui.theme.viewmodels.uiStates.ConversationUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,4 +42,29 @@ class ConversationsViewModel @Inject constructor(
             }
         }
     }
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun formatChatTimestampWithoutZone(dateTimeString: String): String {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
+        val messageTime = LocalDateTime.parse(dateTimeString, formatter)
+        val now = LocalDateTime.now()
+
+        val today = now.toLocalDate()
+        val messageDate = messageTime.toLocalDate()
+
+        return when {
+            messageDate.isEqual(today) -> {
+                messageTime.format(DateTimeFormatter.ofPattern("hh:mm a"))
+            }
+            messageDate.isEqual(today.minusDays(1)) -> {
+                "Yesterday"
+            }
+            messageDate.isAfter(today.minusDays(7)) -> {
+                messageTime.format(DateTimeFormatter.ofPattern("EEE")) // e.g., Mon
+            }
+            else -> {
+                messageTime.format(DateTimeFormatter.ofPattern("dd/MM/yy"))
+            }
+        }
+    }
+
 }

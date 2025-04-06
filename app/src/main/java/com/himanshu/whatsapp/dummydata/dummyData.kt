@@ -6,28 +6,28 @@ import com.himanshu.whatsapp.ui.theme.components.ChatCardData
 import com.himanshu.whatsapp.ui.theme.components.Message
 import com.himanshu.whatsapp.ui.theme.components.MessageStatus
 
-val chatList = listOf(
-    ChatCardData("1","Aman", "Hey, are you free today?", R.drawable.user_profile, "10:30 AM"),
-    ChatCardData("2","Priya", "Let's catch up soon!", R.drawable.user_profile, "Yesterday"),
-    ChatCardData("3","Rohit", "Did you check the new update?", R.drawable.user_profile, "8:45 AM"),
-    ChatCardData("4","Sneha", "Happy Birthday! 🎉", R.drawable.user_profile, "Sunday"),
-    ChatCardData("5","Vikas", "Call me when you're free.", R.drawable.user_profile, "Saturday"),
-    ChatCardData("6","Neha", "Had a great time yesterday!", R.drawable.user_profile, "Friday"),
-    ChatCardData("7","Rahul", "Check out this cool article!", R.drawable.user_profile, "Thursday"),
-    ChatCardData("8","Simran", "Are we still on for dinner?", R.drawable.user_profile, "Wednesday"),
-    ChatCardData("9","Ankit", "Don't forget the meeting at 5.", R.drawable.user_profile, "Tuesday"),
-    ChatCardData("10","Kavita", "How's your new job going?", R.drawable.user_profile, "Monday")  ,
-    ChatCardData("1","Aman", "Hey, are you free today?", R.drawable.user_profile, "10:30 AM"),
-    ChatCardData("2","Priya", "Let's catch up soon!", R.drawable.user_profile, "Yesterday"),
-    ChatCardData("3","Rohit", "Did you check the new update?", R.drawable.user_profile, "8:45 AM"),
-    ChatCardData("4","Sneha", "Happy Birthday! 🎉", R.drawable.user_profile, "Sunday"),
-    ChatCardData("5","Vikas", "Call me when you're free.", R.drawable.user_profile, "Saturday"),
-    ChatCardData("6","Neha", "Had a great time yesterday!", R.drawable.user_profile, "Friday"),
-    ChatCardData("7","Rahul", "Check out this cool article!", R.drawable.user_profile, "Thursday"),
-    ChatCardData("8","Simran", "Are we still on for dinner?", R.drawable.user_profile, "Wednesday"),
-    ChatCardData("9","Ankit", "Don't forget the meeting at 5.", R.drawable.user_profile, "Tuesday"),
-    ChatCardData("10","Kavita", "How's your new job going?", R.drawable.user_profile, "Monday")
-)
+//val chatList = listOf(
+//    ChatCardData("1","Aman", "Hey, are you free today?", R.drawable.user_profile, "10:30 AM"),
+//    ChatCardData("2","Priya", "Let's catch up soon!", R.drawable.user_profile, "Yesterday"),
+//    ChatCardData("3","Rohit", "Did you check the new update?", R.drawable.user_profile, "8:45 AM"),
+//    ChatCardData("4","Sneha", "Happy Birthday! 🎉", R.drawable.user_profile, "Sunday"),
+//    ChatCardData("5","Vikas", "Call me when you're free.", R.drawable.user_profile, "Saturday"),
+//    ChatCardData("6","Neha", "Had a great time yesterday!", R.drawable.user_profile, "Friday"),
+//    ChatCardData("7","Rahul", "Check out this cool article!", R.drawable.user_profile, "Thursday"),
+//    ChatCardData("8","Simran", "Are we still on for dinner?", R.drawable.user_profile, "Wednesday"),
+//    ChatCardData("9","Ankit", "Don't forget the meeting at 5.", R.drawable.user_profile, "Tuesday"),
+//    ChatCardData("10","Kavita", "How's your new job going?", R.drawable.user_profile, "Monday")  ,
+//    ChatCardData("1","Aman", "Hey, are you free today?", R.drawable.user_profile, "10:30 AM"),
+//    ChatCardData("2","Priya", "Let's catch up soon!", R.drawable.user_profile, "Yesterday"),
+//    ChatCardData("3","Rohit", "Did you check the new update?", R.drawable.user_profile, "8:45 AM"),
+//    ChatCardData("4","Sneha", "Happy Birthday! 🎉", R.drawable.user_profile, "Sunday"),
+//    ChatCardData("5","Vikas", "Call me when you're free.", R.drawable.user_profile, "Saturday"),
+//    ChatCardData("6","Neha", "Had a great time yesterday!", R.drawable.user_profile, "Friday"),
+//    ChatCardData("7","Rahul", "Check out this cool article!", R.drawable.user_profile, "Thursday"),
+//    ChatCardData("8","Simran", "Are we still on for dinner?", R.drawable.user_profile, "Wednesday"),
+//    ChatCardData("9","Ankit", "Don't forget the meeting at 5.", R.drawable.user_profile, "Tuesday"),
+//    ChatCardData("10","Kavita", "How's your new job going?", R.drawable.user_profile, "Monday")
+//)
 val dummyMessages = mutableStateListOf(
     Message("1", "Hey, how are you?", MessageStatus.SENT, 1711100100000, isByUser = true),
     Message("2", "I'm good! How about you?", MessageStatus.DELIVERED, 1711100200000, isByUser = false),

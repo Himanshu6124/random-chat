@@ -1,7 +1,8 @@
 package com.himanshu.whatsapp.ui.theme.components
 
+import android.os.Build
 import android.os.Parcelable
-import androidx.compose.foundation.Image
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -20,19 +21,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.himanshu.whatsapp.R
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.himanshu.whatsapp.ui.theme.viewmodels.ConversationsViewModel
 import kotlinx.parcelize.Parcelize
 
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ChatCard(chat: ChatCardData, onClick : (ChatCardData)-> Unit) {
+
+    val viewModel = hiltViewModel<ConversationsViewModel>()
 
     Row(
         modifier = Modifier
@@ -43,8 +49,8 @@ fun ChatCard(chat: ChatCardData, onClick : (ChatCardData)-> Unit) {
         verticalAlignment = Alignment.CenterVertically
     )
     {
-        Image(
-            imageVector = ImageVector.vectorResource(chat.profilePic),
+        GlideImage(
+            model = chat.photoUrl,
             modifier = Modifier
                 .height(50.dp)
                 .clip(RoundedCornerShape(50))
@@ -57,15 +63,15 @@ fun ChatCard(chat: ChatCardData, onClick : (ChatCardData)-> Unit) {
             modifier = Modifier.padding(start = 12.dp)
         ) {
             TextComposable(
-                text = chat.name,
+                text = chat.userName,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Normal
             )
-            TextComposable(text = chat.message)
+            TextComposable(text = chat.lastMessage)
         }
 
         Spacer(modifier = Modifier.weight(1f))
-        TextComposable(text = chat.lastMessageTime)
+        TextComposable(text = viewModel.formatChatTimestampWithoutZone(chat.lastMessageTime))
     }
     HorizontalDivider(thickness = 2.dp )
 
@@ -73,24 +79,29 @@ fun ChatCard(chat: ChatCardData, onClick : (ChatCardData)-> Unit) {
 
 @Parcelize
 data class ChatCardData(
-    val id : String,
-    val name: String,
-    val message: String,
-    val profilePic: Int,
-    val lastMessageTime: String
+    val conversationId : String,
+    val userName: String,
+    val photoUrl: String,
+    val lastMessage: String,
+    val isByYou : Boolean = false,
+    val messageStatus : String = "SENT",
+    val lastMessageTime: String,
+    val messageType  :String
 ):Parcelable
 
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun PrevChatCard() {
     val chat = ChatCardData(
-        id = "1",
-        name = "Himanshu",
-        message = "How are you doing ?",
-        profilePic = R.drawable.user_profile,
-        lastMessageTime = "Sunday"
+        conversationId = "1",
+        userName = "Himanshu",
+        lastMessage = "How are you doing ?",
+        photoUrl = "",
+        lastMessageTime = "Sunday",
+        messageType = "Audio"
     )
     ChatCard(chat){
 

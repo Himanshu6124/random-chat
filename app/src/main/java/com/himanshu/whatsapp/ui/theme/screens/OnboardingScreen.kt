@@ -58,9 +58,9 @@ fun OnboardingScreen(
 
     LaunchedEffect(uiState.value.user) {
         if(uiState.value.user != null){
+            navController.currentBackStackEntry?.savedStateHandle?.set("userId", uiState.value.user!!.deviceId)
             navController.navigate("conversations"){
-                navController.currentBackStackEntry?.savedStateHandle?.set("userId", uiState.value.user!!.deviceId)
-                popUpTo(navController.graph.startDestinationId) { inclusive = true }
+//                popUpTo(navController.graph.startDestinationId) { inclusive = true }
             }
         }
     }

@@ -19,7 +19,7 @@ interface ChatService {
     @GET("/users/profile-pictures")
     suspend fun getProfilePictures() : Response<ArrayList<String>>
 
-    @GET("/conversations/user/{user_id")
-    suspend fun getConversations() : Response<ArrayList<ChatCardData>>
+    @GET("/conversations/user/{user_id}")
+    suspend fun getConversations(@Path("user_id") userId : String) : Response<ArrayList<ChatCardData>>
 
 }

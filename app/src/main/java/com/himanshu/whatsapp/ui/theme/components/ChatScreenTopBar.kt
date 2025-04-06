@@ -23,7 +23,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ChatScreenTopBar(chat: ChatCardData ,onBackPress: ()-> Unit) {
 
@@ -41,8 +44,8 @@ fun ChatScreenTopBar(chat: ChatCardData ,onBackPress: ()-> Unit) {
                 contentDescription = "back"
             )
 
-            Image(
-                painter = painterResource(chat.profilePic),
+            GlideImage(
+                model = chat.photoUrl,
                 modifier = Modifier.sizeIn(maxWidth = 24.dp , maxHeight = 24.dp),
                 contentDescription = "profile"
             )
@@ -53,7 +56,7 @@ fun ChatScreenTopBar(chat: ChatCardData ,onBackPress: ()-> Unit) {
                 verticalArrangement = Arrangement.SpaceAround,
             ) {
                 TextComposable(
-                    text = chat.name,
+                    text = chat.userName,
                     fontSize = 18.sp
                 )
                 TextComposable(

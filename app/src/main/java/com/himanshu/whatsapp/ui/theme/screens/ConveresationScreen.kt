@@ -8,11 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.himanshu.whatsapp.ui.theme.components.ChatCard
-import com.himanshu.whatsapp.dummydata.chatList
-import com.himanshu.whatsapp.ui.theme.components.ChatCardData
 import com.himanshu.whatsapp.ui.theme.nav.Screen
 import com.himanshu.whatsapp.ui.theme.viewmodels.ConversationsViewModel
-import com.himanshu.whatsapp.ui.theme.viewmodels.UserViewModel
 
 @Composable
 fun ConversationScreen(navController: NavController, modifier: Modifier) {
@@ -32,7 +29,7 @@ fun ConversationScreen(navController: NavController, modifier: Modifier) {
         items(uiState.conversations){
             ChatCard(it) {chat->
                 navController.currentBackStackEntry?.savedStateHandle?.set("chatData", chat)
-                navController.navigate("${Screen.ChatDetail.route}/${chat.id}")
+                navController.navigate("${Screen.ChatDetail.route}/${chat.conversationId}")
             }
         }
     }

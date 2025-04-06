@@ -11,5 +11,5 @@ class ChatRepository(private val chatService: ChatService) {
 
     suspend fun getProfilePictures() = chatService.getProfilePictures()
 
-    suspend fun getConversations(userId: String) = chatService.getConversations()
+    suspend fun getConversations(userId: String) = chatService.getConversations(userId)
 }
