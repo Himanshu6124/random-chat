@@ -1,5 +1,7 @@
 package com.himanshu.whatsapp.ui.theme.nav
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +31,7 @@ import com.himanshu.whatsapp.ui.theme.screens.ConversationScreen
 import com.himanshu.whatsapp.ui.theme.screens.OnboardingScreen
 import com.himanshu.whatsapp.ui.theme.screens.SplashScreen
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun BottomNavigation(navController: NavHostController, modifier: Modifier) {
 

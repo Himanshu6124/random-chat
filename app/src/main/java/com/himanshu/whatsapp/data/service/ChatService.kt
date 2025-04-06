@@ -2,6 +2,7 @@ package com.himanshu.whatsapp.data.service
 
 import com.himanshu.whatsapp.data.model.User
 import com.himanshu.whatsapp.ui.theme.components.ChatCardData
+import com.himanshu.whatsapp.ui.theme.components.Message
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -21,5 +22,8 @@ interface ChatService {
 
     @GET("/conversations/user/{user_id}")
     suspend fun getConversations(@Path("user_id") userId : String) : Response<ArrayList<ChatCardData>>
+
+    @GET("/messages/conversation/{conversationId}")
+    suspend fun getMessages(@Path("conversationId") userId : String) : Response<ArrayList<Message>>
 
 }

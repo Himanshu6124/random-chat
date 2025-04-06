@@ -56,7 +56,7 @@ fun ChatScreenTopBar(chat: ChatCardData ,onBackPress: ()-> Unit) {
                 verticalArrangement = Arrangement.SpaceAround,
             ) {
                 TextComposable(
-                    text = chat.userName,
+                    text = chat.friendUserName,
                     fontSize = 18.sp
                 )
                 TextComposable(

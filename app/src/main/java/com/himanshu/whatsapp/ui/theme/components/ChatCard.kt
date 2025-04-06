@@ -63,7 +63,7 @@ fun ChatCard(chat: ChatCardData, onClick : (ChatCardData)-> Unit) {
             modifier = Modifier.padding(start = 12.dp)
         ) {
             TextComposable(
-                text = chat.userName,
+                text = chat.friendUserName,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Normal
             )
@@ -71,7 +71,7 @@ fun ChatCard(chat: ChatCardData, onClick : (ChatCardData)-> Unit) {
         }
 
         Spacer(modifier = Modifier.weight(1f))
-        TextComposable(text = viewModel.formatChatTimestampWithoutZone(chat.lastMessageTime))
+//        TextComposable(text = viewModel.formatChatTimestampWithoutZone(chat.lastMessageTime))
     }
     HorizontalDivider(thickness = 2.dp )
 
@@ -80,7 +80,9 @@ fun ChatCard(chat: ChatCardData, onClick : (ChatCardData)-> Unit) {
 @Parcelize
 data class ChatCardData(
     val conversationId : String,
-    val userName: String,
+    val friendUserName: String,
+    val friendUserId: String,
+    val isTyping : Boolean= false,
     val photoUrl: String,
     val lastMessage: String,
     val isByYou : Boolean = false,
@@ -97,7 +99,8 @@ data class ChatCardData(
 fun PrevChatCard() {
     val chat = ChatCardData(
         conversationId = "1",
-        userName = "Himanshu",
+        friendUserName = "Himanshu",
+        friendUserId = "",
         lastMessage = "How are you doing ?",
         photoUrl = "",
         lastMessageTime = "Sunday",

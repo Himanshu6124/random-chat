@@ -1,5 +1,8 @@
 package com.himanshu.whatsapp.ui.theme.screens
 
+import android.os.Build
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +12,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -16,28 +21,39 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.himanshu.whatsapp.dummydata.dummyMessages
 import com.himanshu.whatsapp.ui.theme.components.ChatCardData
 import com.himanshu.whatsapp.ui.theme.components.ChatScreenTopBar
 import com.himanshu.whatsapp.ui.theme.components.Message
 import com.himanshu.whatsapp.ui.theme.components.MessageCard
+import com.himanshu.whatsapp.ui.theme.components.MessageStatus
 import com.himanshu.whatsapp.ui.theme.components.SendMessageButton
+import com.himanshu.whatsapp.ui.theme.viewmodels.ChatViewModel
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ChatScreen(
     navController: NavController,
     modifier: Modifier
 ) {
+    val viewModel = hiltViewModel<ChatViewModel>()
     val chat = navController.previousBackStackEntry?.savedStateHandle?.get<ChatCardData>("chatData")
+    val userId = navController.previousBackStackEntry?.savedStateHandle?.get<String>("userId")
     var inputText by remember { mutableStateOf("") }
-    val messages = remember { dummyMessages }
+    val messages = viewModel.uiState.value.messages
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
+    val message by viewModel.messages.collectAsState()
+    val context = LocalContext.current
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun addMessage(newMessage: Message) {
+        newMessage.status = MessageStatus.DELIVERED
         messages.add(newMessage)
+        viewModel.sendMessage(newMessage)
         inputText = ""
         scope.launch {
             val index = messages.size - 1
@@ -46,6 +62,21 @@ fun ChatScreen(
             }
         }
     }
+
+    LaunchedEffect(message) {
+        Toast.makeText(context,message.toString(),Toast.LENGTH_LONG).show()
+        message?.let { addMessage(it) }
+    }
+
+
+    LaunchedEffect(Unit) {
+        viewModel.getMessages(chat?.conversationId?:"")
+        viewModel.connectToSocket(
+            friendUserId = chat?.friendUserId ?:"" ,
+            conversationId = chat?.conversationId?: ""
+        )
+    }
+
 
     fun deleteMessage(message: Message){
 //        messages.remove(message)
@@ -72,12 +103,14 @@ fun ChatScreen(
                 state = listState
             ) {
                 items(messages) { message ->
-                    MessageCard(message){
+                    MessageCard(userId,message){
                         deleteMessage(it)
                     }
                 }
             }
             SendMessageButton(
+                userId = userId ?:"",
+                conversationId = chat?.conversationId ?:"",
                 inputText = inputText,
                 onTextUpdate = { inputText = it},
                 onSendMessage = { addMessage(it) }

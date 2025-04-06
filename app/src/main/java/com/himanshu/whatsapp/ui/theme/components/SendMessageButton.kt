@@ -1,5 +1,7 @@
 package com.himanshu.whatsapp.ui.theme.components
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,9 +13,13 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import java.time.LocalDateTime
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SendMessageButton(
+    userId : String,
+    conversationId :String,
     inputText : String,
     onTextUpdate : (String)-> Unit,
     onSendMessage : (Message)-> Unit,
@@ -37,11 +43,11 @@ fun SendMessageButton(
                         if(inputText == "") return@clickable
 
                         val newMessage = Message(
-                            id = "11",
-                            text = inputText,
+                            message = inputText,
                             status = MessageStatus.SENT,
-                            time = System.currentTimeMillis(),
-                            isByUser = true
+                            timeStamp = LocalDateTime.now().toString(),
+                            senderId = userId,
+                            conversationId = conversationId
                         )
                         onSendMessage(newMessage)
                     }

@@ -73,6 +73,8 @@ class UserViewModel @Inject constructor (
                 )
                 userDataStore.saveUser(res)
                 println("User get success $res")
+                val user = userDataStore.getUser()
+                println("USER is $user")
 
             }catch (e : Exception){
                 _uiState.value = uiState.value.copy(
