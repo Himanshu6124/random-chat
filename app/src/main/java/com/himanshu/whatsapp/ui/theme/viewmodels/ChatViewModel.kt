@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.himanshu.whatsapp.data.repository.ChatRepository
 import com.himanshu.whatsapp.data.repository.StompRepository
 import com.himanshu.whatsapp.ui.theme.components.Message
+import com.himanshu.whatsapp.ui.theme.components.OnlineStatus
 import com.himanshu.whatsapp.ui.theme.viewmodels.uiStates.ChatUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
@@ -21,6 +22,9 @@ class ChatViewModel @Inject constructor(
 
     private val _messages = stompRepository.messages
     val messages: StateFlow<Message?>  = _messages
+
+    private val _isOnline = stompRepository.onlineStatus
+    val isOnline = _isOnline
 
     private val _uiState = mutableStateOf(ChatUIState())
     val uiState : State<ChatUIState> = _uiState
@@ -64,5 +68,13 @@ class ChatViewModel @Inject constructor(
     fun sendMessage(message: Message){
         stompRepository.sendMessage("/app/chat.send" ,message)
     }
+    fun sendOnlineStatus(senderId : String, conversationId: String){
+        val onlineStatus = OnlineStatus(
+            senderId = senderId,
+            conversationId = conversationId
+        )
+        stompRepository.sendMessage("/app/chat.online" ,onlineStatus)
+    }
+
 
 }

@@ -28,7 +28,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun ChatScreenTopBar(chat: ChatCardData ,onBackPress: ()-> Unit) {
+fun ChatScreenTopBar(chat: ChatCardData , isOnline : Boolean ,onBackPress: ()-> Unit) {
 
     Column {
         Row(
@@ -60,7 +60,7 @@ fun ChatScreenTopBar(chat: ChatCardData ,onBackPress: ()-> Unit) {
                     fontSize = 18.sp
                 )
                 TextComposable(
-                    text = "online",
+                    text = if(isOnline) "online" else "Offline",
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Normal
                 )

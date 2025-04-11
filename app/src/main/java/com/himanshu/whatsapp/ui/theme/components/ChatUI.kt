@@ -72,3 +72,9 @@ data class Message(
     val conversationId: String,
     val timeStamp: String,
 )
+
+data class OnlineStatus(
+    val senderId: String?= null,
+    val conversationId: String,
+    val online: Boolean = true,
+)

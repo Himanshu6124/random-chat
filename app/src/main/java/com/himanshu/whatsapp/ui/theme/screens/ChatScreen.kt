@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -43,7 +44,8 @@ fun ChatScreen(
     val chat = navController.previousBackStackEntry?.savedStateHandle?.get<ChatCardData>("chatData")
     val userId = navController.previousBackStackEntry?.savedStateHandle?.get<String>("userId")
     var inputText by remember { mutableStateOf("") }
-    val messages = viewModel.uiState.value.messages
+    val messages = remember { mutableStateListOf<Message>() }
+    val isOnline = viewModel.isOnline.collectAsState()
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val message by viewModel.messages.collectAsState()
@@ -51,9 +53,7 @@ fun ChatScreen(
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun addMessage(newMessage: Message) {
-        newMessage.status = MessageStatus.DELIVERED
         messages.add(newMessage)
-        viewModel.sendMessage(newMessage)
         inputText = ""
         scope.launch {
             val index = messages.size - 1
@@ -64,13 +64,13 @@ fun ChatScreen(
     }
 
     LaunchedEffect(message) {
-        Toast.makeText(context,message.toString(),Toast.LENGTH_LONG).show()
         message?.let { addMessage(it) }
     }
 
 
     LaunchedEffect(Unit) {
         viewModel.getMessages(chat?.conversationId?:"")
+        viewModel.sendOnlineStatus(userId?:"",chat?.conversationId?:"")
         viewModel.connectToSocket(
             friendUserId = chat?.friendUserId ?:"" ,
             conversationId = chat?.conversationId?: ""
@@ -85,7 +85,7 @@ fun ChatScreen(
     Scaffold(
         topBar = {
             if (chat != null) {
-                ChatScreenTopBar(chat){
+                ChatScreenTopBar(chat , isOnline = isOnline.value ){
                     navController.popBackStack()
                 }
             }
@@ -113,7 +113,10 @@ fun ChatScreen(
                 conversationId = chat?.conversationId ?:"",
                 inputText = inputText,
                 onTextUpdate = { inputText = it},
-                onSendMessage = { addMessage(it) }
+                onSendMessage = {
+                    viewModel.sendMessage(it)
+                    addMessage(it)
+                }
             )
         }
     }
