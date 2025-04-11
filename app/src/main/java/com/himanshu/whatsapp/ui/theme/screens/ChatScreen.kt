@@ -32,6 +32,7 @@ import com.himanshu.whatsapp.ui.theme.components.MessageCard
 import com.himanshu.whatsapp.ui.theme.components.MessageStatus
 import com.himanshu.whatsapp.ui.theme.components.SendMessageButton
 import com.himanshu.whatsapp.ui.theme.viewmodels.ChatViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -46,6 +47,7 @@ fun ChatScreen(
     var inputText by remember { mutableStateOf("") }
     val messages = remember { mutableStateListOf<Message>() }
     val isOnline = viewModel.isOnline.collectAsState()
+    val isTyping = viewModel.isTyping.collectAsState()
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val message by viewModel.messages.collectAsState()
@@ -73,8 +75,9 @@ fun ChatScreen(
         viewModel.sendOnlineStatus(userId?:"",chat?.conversationId?:"")
         viewModel.connectToSocket(
             friendUserId = chat?.friendUserId ?:"" ,
-            conversationId = chat?.conversationId?: ""
+            conversationId = chat?.conversationId?: "",
         )
+        viewModel.getUserStatus(friendId = chat?.friendUserId.orEmpty(), conversationId = chat?.conversationId.orEmpty())
     }
 
 
@@ -85,7 +88,10 @@ fun ChatScreen(
     Scaffold(
         topBar = {
             if (chat != null) {
-                ChatScreenTopBar(chat , isOnline = isOnline.value ){
+                ChatScreenTopBar(
+                    chat = chat ,
+                    isOnline = isOnline.value,
+                ){
                     navController.popBackStack()
                 }
             }
@@ -112,7 +118,13 @@ fun ChatScreen(
                 userId = userId ?:"",
                 conversationId = chat?.conversationId ?:"",
                 inputText = inputText,
-                onTextUpdate = { inputText = it},
+                onTextUpdate =  {
+                    inputText = it
+                    viewModel.onUserTyping(
+                        senderId = userId?:"",
+                        conversationId = chat?.conversationId.orEmpty(),
+                        inputText = it
+                ) },
                 onSendMessage = {
                     viewModel.sendMessage(it)
                     addMessage(it)

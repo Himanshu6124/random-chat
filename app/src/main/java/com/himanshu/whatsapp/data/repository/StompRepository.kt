@@ -6,6 +6,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonParser
 import com.himanshu.whatsapp.ui.theme.components.Message
 import com.himanshu.whatsapp.ui.theme.components.OnlineStatus
+import com.himanshu.whatsapp.ui.theme.components.TypingStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import ua.naiksoftware.stomp.Stomp
@@ -17,7 +18,7 @@ import javax.inject.Singleton
 @Singleton
 class StompRepository @Inject constructor() {
 
-    private val BASE_URL = "wss://randomchat-d3gv.onrender.com/ws-chat"
+    private val BASE_URL = "ws://192.168.31.8:8080/ws-chat"
 
     private val stompClient: StompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, BASE_URL)
     private val gson = Gson()
@@ -27,6 +28,9 @@ class StompRepository @Inject constructor() {
 
     private val _onlineStatus = MutableStateFlow(false)
     val onlineStatus: StateFlow<Boolean> = _onlineStatus
+
+    private val _isTyping = MutableStateFlow(false)
+    val isTyping: StateFlow<Boolean> = _isTyping
 
     @SuppressLint("CheckResult")
     fun connectAndSubscribe(friendUserId: String, conversationId: String) {
@@ -58,6 +62,11 @@ class StompRepository @Inject constructor() {
                     jsonObject.has("online") -> {
                         val status = gson.fromJson(topicMessage.payload, OnlineStatus::class.java)
                         _onlineStatus.value = status.online
+                    }
+
+                    jsonObject.has("typing") -> {
+                        val status = gson.fromJson(topicMessage.payload, TypingStatus::class.java)
+                        _isTyping.value = status.typing
                     }
                     else -> {
                         Log.w("STOMP", "Unknown payload: ${topicMessage.payload}")

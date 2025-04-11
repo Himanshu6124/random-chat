@@ -76,5 +76,11 @@ data class Message(
 data class OnlineStatus(
     val senderId: String?= null,
     val conversationId: String,
-    val online: Boolean = true,
+    val online: Boolean = false,
+)
+
+data class TypingStatus(
+    val senderId: String?= null,
+    val conversationId: String,
+    val typing: Boolean = false ,
 )

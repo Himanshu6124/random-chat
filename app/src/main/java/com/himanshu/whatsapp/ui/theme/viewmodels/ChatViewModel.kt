@@ -8,8 +8,11 @@ import com.himanshu.whatsapp.data.repository.ChatRepository
 import com.himanshu.whatsapp.data.repository.StompRepository
 import com.himanshu.whatsapp.ui.theme.components.Message
 import com.himanshu.whatsapp.ui.theme.components.OnlineStatus
+import com.himanshu.whatsapp.ui.theme.components.TypingStatus
 import com.himanshu.whatsapp.ui.theme.viewmodels.uiStates.ChatUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,11 +23,18 @@ class ChatViewModel @Inject constructor(
     private val chatRepository: ChatRepository
 ) : ViewModel() {
 
+    private var typingJob: Job? = null
+    private var hasSentTypingStatus = false
+    private val typingDelayMillis = 1000L
+
     private val _messages = stompRepository.messages
     val messages: StateFlow<Message?>  = _messages
 
     private val _isOnline = stompRepository.onlineStatus
     val isOnline = _isOnline
+
+    private val _isTyping = stompRepository.isTyping
+    val isTyping = _isTyping
 
     private val _uiState = mutableStateOf(ChatUIState())
     val uiState : State<ChatUIState> = _uiState
@@ -71,10 +81,44 @@ class ChatViewModel @Inject constructor(
     fun sendOnlineStatus(senderId : String, conversationId: String){
         val onlineStatus = OnlineStatus(
             senderId = senderId,
-            conversationId = conversationId
+            conversationId = conversationId,
+            online = true
         )
         stompRepository.sendMessage("/app/chat.online" ,onlineStatus)
     }
 
+    private fun sendTypingStatus(senderId : String, conversationId: String, isTyping : Boolean){
+        val typingStatus = TypingStatus(
+            senderId = senderId,
+            conversationId = conversationId,
+            typing = isTyping
+        )
+        stompRepository.sendMessage("/app/chat.typing" ,typingStatus)
+    }
 
+    fun getUserStatus(friendId : String, conversationId: String){
+        val typingStatus = OnlineStatus(
+            senderId = friendId,
+            conversationId = conversationId,
+        )
+        stompRepository.sendMessage("/app/chat.user.status" ,typingStatus)
+    }
+
+    fun onUserTyping(senderId: String, conversationId: String, inputText: String) {
+        if (inputText.isNotEmpty()) {
+            if (!hasSentTypingStatus) {
+                hasSentTypingStatus = true
+                sendTypingStatus(senderId, conversationId, isTyping = true)
+            }
+
+            typingJob?.cancel()
+            typingJob = viewModelScope.launch {
+                delay(typingDelayMillis)
+                hasSentTypingStatus = false
+                sendTypingStatus(senderId, conversationId, isTyping = false)
+            }
+        } else {
+            sendTypingStatus(senderId, conversationId, isTyping = false)
+        }
+    }
 }

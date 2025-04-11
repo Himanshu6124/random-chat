@@ -61,7 +61,7 @@ fun ChatScreenTopBar(chat: ChatCardData , isOnline : Boolean ,onBackPress: ()-> 
                 )
                 TextComposable(
                     text = if(isOnline) "online" else "Offline",
-                    fontSize = 10.sp,
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.Normal
                 )
             }
