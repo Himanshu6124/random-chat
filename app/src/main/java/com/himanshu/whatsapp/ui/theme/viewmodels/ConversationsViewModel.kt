@@ -2,14 +2,15 @@ package com.himanshu.whatsapp.ui.theme.viewmodels
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.himanshu.whatsapp.data.repository.ChatRepository
 import com.himanshu.whatsapp.data.repository.StompRepository
 import com.himanshu.whatsapp.ui.theme.viewmodels.uiStates.ConversationUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -21,43 +22,68 @@ class ConversationsViewModel @Inject constructor(
     private val stompRepository: StompRepository
 ) : ViewModel() {
 
-    private val _uiState = mutableStateOf(ConversationUIState())
-    val uiState : State<ConversationUIState> = _uiState
-
+    private val _uiState = MutableStateFlow(ConversationUIState())
+    val uiState: StateFlow<ConversationUIState> = _uiState
     private val _conversation = stompRepository.chatCardData
-    val conversation = _conversation
 
-
-    fun getConversations(userId: String) {
+    init {
         viewModelScope.launch {
-            _uiState.value = uiState.value.copy(
-                isLoading = true
-            )
-
-            try {
-                val res = chatRepository.getConversations(userId).body()
-                _uiState.value = uiState.value.copy(
-                    conversations = res?: arrayListOf(),
-                    isLoading = false
-                )
-            }catch (e : Exception){
-                _uiState.value = uiState.value.copy(
-                    isLoading = false
-                )
+            _conversation.collect { conversation->
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        matchingConversation = conversation
+                    )
+                }
             }
         }
     }
 
-    fun connectToSocket(userId :String){
-        stompRepository.connectAndSubscribe(
+
+    fun getConversations(userId: String) {
+        viewModelScope.launch {
+
+            _uiState.update { state ->
+                state.copy(
+                    isLoading = true
+                )
+            }
+
+            try {
+                val res = chatRepository.getConversations(userId).body()
+                _uiState.update { state ->
+                    state.copy(
+                        conversations = res ?: arrayListOf(),
+                        isLoading = false
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update { state ->
+                    state.copy(
+                        isLoading = false
+                    )
+                }
+            }
+        }
+    }
+
+    fun connectToSocketAndSubscribe(userId: String) {
+        stompRepository.connect(
             userId = userId,
-            isForChat = false
+        )
+        stompRepository.subscribe(
+            topic = "/topic/room/random/$userId"
         )
         startMatching(userId)
     }
 
-    fun startMatching(userId : String){
-        stompRepository.sendMessage("/app/chat.random" ,userId)
+    private fun startMatching(userId: String) {
+        _uiState.update { state ->
+            state.copy(
+                isLoading = true
+            )
+        }
+        stompRepository.sendMessage("/app/chat.random", userId)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -73,12 +99,15 @@ class ConversationsViewModel @Inject constructor(
             messageDate.isEqual(today) -> {
                 messageTime.format(DateTimeFormatter.ofPattern("hh:mm a"))
             }
+
             messageDate.isEqual(today.minusDays(1)) -> {
                 "Yesterday"
             }
+
             messageDate.isAfter(today.minusDays(7)) -> {
                 messageTime.format(DateTimeFormatter.ofPattern("EEE")) // e.g., Mon
             }
+
             else -> {
                 messageTime.format(DateTimeFormatter.ofPattern("dd/MM/yy"))
             }

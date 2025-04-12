@@ -19,9 +19,7 @@ import javax.inject.Singleton
 @Singleton
 class StompRepository @Inject constructor() {
 
-    private val BASE_URL = "ws://192.168.31.8:8080/ws-chat"
-
-    private val stompClient: StompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, BASE_URL)
+    private var stompClient: StompClient? = null
     private val gson = Gson()
 
     private val _messages = MutableStateFlow<Message?>(null)
@@ -36,17 +34,15 @@ class StompRepository @Inject constructor() {
     private val _chatCardData = MutableStateFlow(ChatCardData())
     val chatCardData: StateFlow<ChatCardData> = _chatCardData
 
-    @SuppressLint("CheckResult")
-    fun connectAndSubscribe(
-        friendUserId: String = "",
-        conversationId: String = "" ,
-        isForChat : Boolean = true ,
-        userId : String = ""
-    ) {
-        if(stompClient.isConnected) return
-        stompClient.connect()
 
-        stompClient.lifecycle().subscribe { lifecycleEvent ->
+    @SuppressLint("CheckResult")
+    fun connect(userId: String) {
+        if (stompClient?.isConnected == true) return
+
+        stompClient = createStompClient(userId)
+        stompClient?.connect()
+
+        stompClient?.lifecycle()?.subscribe { lifecycleEvent ->
             when (lifecycleEvent.type) {
                 LifecycleEvent.Type.OPENED -> Log.d("STOMP", "Connection opened")
                 LifecycleEvent.Type.ERROR -> Log.e("STOMP", "Error", lifecycleEvent.exception)
@@ -54,10 +50,13 @@ class StompRepository @Inject constructor() {
                 else -> Unit
             }
         }
+    }
 
-        val topicPath = if (isForChat) "/topic/room/$friendUserId-$conversationId" else "/topic/room/random/$userId"
-
-        stompClient.topic(topicPath).subscribe { topicMessage ->
+    @SuppressLint("CheckResult")
+    fun subscribe(
+        topic : String,
+    ) {
+        stompClient?.topic(topic)?.subscribe { topicMessage ->
             Log.d("STOMP", "Received: ${topicMessage.payload}")
 
             try {
@@ -72,12 +71,10 @@ class StompRepository @Inject constructor() {
                         val status = gson.fromJson(topicMessage.payload, OnlineStatus::class.java)
                         _onlineStatus.value = status.online
                     }
-
                     jsonObject.has("typing") -> {
                         val status = gson.fromJson(topicMessage.payload, TypingStatus::class.java)
                         _isTyping.value = status.typing
                     }
-
                     jsonObject.has("friendUserName") -> {
                         val conversation = gson.fromJson(topicMessage.payload, ChatCardData::class.java)
                         _chatCardData.value = conversation
@@ -92,15 +89,24 @@ class StompRepository @Inject constructor() {
         }
     }
 
+
     fun sendMessage(destination: String, message: Any) {
-//        val json = Gson().toJson(message)
-        stompClient.send(destination, message.toString()).subscribe()
+        val json = Gson().toJson(message)
+        stompClient?.send(destination, json)?.subscribe()
     }
 
     fun disconnect() {
-        if (stompClient.isConnected) {
-            stompClient.disconnect()
+        if (stompClient?.isConnected == true) {
+            stompClient?.disconnect()
             Log.d("STOMP", "Disconnected")
         }
     }
 }
+
+
+private fun createStompClient(userId: String): StompClient {
+    val urlWithParams = "$BASE_URL?userId=$userId"
+    return Stomp.over(Stomp.ConnectionProvider.OKHTTP, urlWithParams)
+}
+
+private val BASE_URL = "ws://192.168.31.8:8080/ws-chat"

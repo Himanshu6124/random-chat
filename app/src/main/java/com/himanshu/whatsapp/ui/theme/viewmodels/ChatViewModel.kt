@@ -68,11 +68,9 @@ class ChatViewModel @Inject constructor(
         stompRepository.disconnect()
     }
 
-    fun connectToSocket(friendUserId :String,conversationId :String){
-        stompRepository.connectAndSubscribe(
-            friendUserId = friendUserId,
-            conversationId = conversationId
-        )
+    fun connectToSocket(friendUserId :String,conversationId :String ,senderId : String){
+        stompRepository.connect(userId = senderId)
+        stompRepository.subscribe(topic ="/topic/room/$friendUserId-$conversationId")
     }
 
     fun sendMessage(message: Message){
