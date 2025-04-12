@@ -79,16 +79,16 @@ fun ChatCard(chat: ChatCardData, onClick : (ChatCardData)-> Unit) {
 
 @Parcelize
 data class ChatCardData(
-    val conversationId : String,
-    val friendUserName: String,
-    val friendUserId: String,
+    val conversationId : String = "",
+    val friendUserName: String = "",
+    val friendUserId: String = "",
     val isTyping : Boolean= false,
-    val photoUrl: String,
-    val lastMessage: String,
+    val photoUrl: String = "",
+    val lastMessage: String = "",
     val isByYou : Boolean = false,
     val messageStatus : String = "SENT",
-    val lastMessageTime: String,
-    val messageType  :String
+    val lastMessageTime: String = "",
+    val messageType  :String = ""
 ):Parcelable
 
 

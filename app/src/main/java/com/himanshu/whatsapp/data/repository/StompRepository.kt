@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.JsonParser
+import com.himanshu.whatsapp.ui.theme.components.ChatCardData
 import com.himanshu.whatsapp.ui.theme.components.Message
 import com.himanshu.whatsapp.ui.theme.components.OnlineStatus
 import com.himanshu.whatsapp.ui.theme.components.TypingStatus
@@ -32,8 +33,16 @@ class StompRepository @Inject constructor() {
     private val _isTyping = MutableStateFlow(false)
     val isTyping: StateFlow<Boolean> = _isTyping
 
+    private val _chatCardData = MutableStateFlow(ChatCardData())
+    val chatCardData: StateFlow<ChatCardData> = _chatCardData
+
     @SuppressLint("CheckResult")
-    fun connectAndSubscribe(friendUserId: String, conversationId: String) {
+    fun connectAndSubscribe(
+        friendUserId: String = "",
+        conversationId: String = "" ,
+        isForChat : Boolean = true ,
+        userId : String = ""
+    ) {
         if(stompClient.isConnected) return
         stompClient.connect()
 
@@ -46,7 +55,7 @@ class StompRepository @Inject constructor() {
             }
         }
 
-        val topicPath = "/topic/room/$friendUserId-$conversationId"
+        val topicPath = if (isForChat) "/topic/room/$friendUserId-$conversationId" else "/topic/room/random/$userId"
 
         stompClient.topic(topicPath).subscribe { topicMessage ->
             Log.d("STOMP", "Received: ${topicMessage.payload}")
@@ -68,6 +77,11 @@ class StompRepository @Inject constructor() {
                         val status = gson.fromJson(topicMessage.payload, TypingStatus::class.java)
                         _isTyping.value = status.typing
                     }
+
+                    jsonObject.has("friendUserName") -> {
+                        val conversation = gson.fromJson(topicMessage.payload, ChatCardData::class.java)
+                        _chatCardData.value = conversation
+                    }
                     else -> {
                         Log.w("STOMP", "Unknown payload: ${topicMessage.payload}")
                     }
@@ -79,8 +93,8 @@ class StompRepository @Inject constructor() {
     }
 
     fun sendMessage(destination: String, message: Any) {
-        val json = Gson().toJson(message)
-        stompClient.send(destination, json).subscribe()
+//        val json = Gson().toJson(message)
+        stompClient.send(destination, message.toString()).subscribe()
     }
 
     fun disconnect() {
