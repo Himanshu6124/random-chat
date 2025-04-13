@@ -48,18 +48,18 @@ fun ChatScreen(
     val viewModel = hiltViewModel<ChatViewModel>()
     val chat = navController.previousBackStackEntry?.savedStateHandle?.get<ChatCardData>("chatData")
     val userId = navController.previousBackStackEntry?.savedStateHandle?.get<String>("userId")
+    val isRandomMatch = navController.previousBackStackEntry?.savedStateHandle?.get<Boolean>("isRandom") ?: false
     var inputText by remember { mutableStateOf("") }
-    val messages = remember { mutableStateListOf<Message>() }
+    val messages = viewModel.uiState.value.messages
     val isOnline = viewModel.isOnline.collectAsState()
     val isTyping = viewModel.isTyping.collectAsState()
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
-    val message by viewModel.messages.collectAsState()
-    val context = LocalContext.current
+    val message by viewModel.message.collectAsState()
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun addMessage(newMessage: Message) {
-        messages.add(newMessage)
+        viewModel.addMessage(newMessage)
         inputText = ""
         scope.launch {
             val index = messages.size - 1
@@ -145,7 +145,7 @@ fun ChatScreen(
                         )
                     },
                     onSendMessage = {
-                        viewModel.sendMessage(it)
+                        viewModel.sendMessage(message = it, isRandom = isRandomMatch)
                         addMessage(it)
                     }
                 )

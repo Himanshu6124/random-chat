@@ -27,8 +27,8 @@ class ChatViewModel @Inject constructor(
     private var hasSentTypingStatus = false
     private val typingDelayMillis = 1000L
 
-    private val _messages = stompRepository.messages
-    val messages: StateFlow<Message?>  = _messages
+    private val _message = stompRepository.messages
+    val message: StateFlow<Message?>  = _message
 
     private val _isOnline = stompRepository.onlineStatus
     val isOnline = _isOnline
@@ -39,7 +39,11 @@ class ChatViewModel @Inject constructor(
     private val _uiState = mutableStateOf(ChatUIState())
     val uiState : State<ChatUIState> = _uiState
 
-
+    fun addMessage(message: Message) {
+        val currentMessages = _uiState.value.messages.toMutableList()
+        currentMessages.add(message)
+        _uiState.value = _uiState.value.copy(messages = currentMessages)
+    }
 
 
     fun getMessages(conversationId: String) {
@@ -73,8 +77,9 @@ class ChatViewModel @Inject constructor(
         stompRepository.subscribe(topic ="/topic/room/$friendUserId-$conversationId")
     }
 
-    fun sendMessage(message: Message){
-        stompRepository.sendMessage("/app/chat.send" ,message)
+    fun sendMessage(message: Message ,isRandom : Boolean){
+        val destination = if(isRandom) "/app/chat.random.send" else "/app/chat.send"
+        stompRepository.sendMessage(destination ,message)
     }
     fun sendOnlineStatus(senderId : String, conversationId: String){
         val onlineStatus = OnlineStatus(

@@ -42,6 +42,7 @@ fun ConversationScreen(navController: NavController, modifier: Modifier) {
     LaunchedEffect(conversation) {
         if (conversation.conversationId.isNotEmpty()){
             navController.currentBackStackEntry?.savedStateHandle?.set("chatData", conversation)
+            navController.currentBackStackEntry?.savedStateHandle?.set("isRandom", true)
             navController.currentBackStackEntry?.savedStateHandle?.set("userId", userId)
             navController.navigate("${Screen.ChatDetail.route}/${conversation.conversationId}")
         }
