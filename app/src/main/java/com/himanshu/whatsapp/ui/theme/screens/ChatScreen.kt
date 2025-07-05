@@ -13,12 +13,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -33,10 +31,8 @@ import com.himanshu.whatsapp.ui.theme.components.ChatCardData
 import com.himanshu.whatsapp.ui.theme.components.ChatScreenTopBar
 import com.himanshu.whatsapp.ui.theme.components.Message
 import com.himanshu.whatsapp.ui.theme.components.MessageCard
-import com.himanshu.whatsapp.ui.theme.components.MessageStatus
 import com.himanshu.whatsapp.ui.theme.components.SendMessageButton
 import com.himanshu.whatsapp.ui.theme.viewmodels.ChatViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -56,6 +52,26 @@ fun ChatScreen(
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val message by viewModel.message.collectAsState()
+    val context = LocalContext.current
+
+    var toastMessage by remember { mutableStateOf<String?>(null) }
+
+    // Watch for friend request success/error and show toast
+    LaunchedEffect(viewModel.requestSuccess, viewModel.error) {
+        if (viewModel.requestSuccess.value == true) {
+            toastMessage = "Friend request sent successfully!"
+            // Optionally, clear the flag in your ViewModel/state here if necessary.
+        } else if (viewModel.error.value != null) {
+            toastMessage = viewModel.error.value
+        }
+    }
+    // Actually show the toast when toastMessage is set
+    LaunchedEffect(toastMessage) {
+        toastMessage?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            toastMessage = null
+        }
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun addMessage(newMessage: Message) {
@@ -99,9 +115,14 @@ fun ChatScreen(
                 ChatScreenTopBar(
                     chat = chat,
                     isOnline = isOnline.value,
-                ) {
-                    navController.popBackStack()
-                }
+                    onBackPress = { navController.popBackStack() },
+                    onAddFriend = {
+                        viewModel.sendFriendRequest(
+                            userId = userId.orEmpty(),
+                            friendId = chat.friendUserId
+                        )
+                    }
+                )
             }
         },
     ) { padding ->

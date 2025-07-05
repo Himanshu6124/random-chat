@@ -14,4 +14,6 @@ class ChatRepository(private val chatService: ChatService) {
     suspend fun getConversations(userId: String) = chatService.getConversations(userId)
 
     suspend fun getMessages(conversationId : String) = chatService.getMessages(conversationId)
+
+    suspend fun sendFriendRequest(userId: String, friendId: String) = chatService.friendRequest(userId, friendId ,"send")
 }

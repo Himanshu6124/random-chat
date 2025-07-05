@@ -14,7 +14,7 @@ import javax.inject.Singleton
 class NetworkModule {
 
     companion object{
-        private const val BASE_URL = "https://randomchat-d3gv.onrender.com"
+        private const val BASE_URL = "http://192.168.31.8:8080"
     }
 
     @Provides

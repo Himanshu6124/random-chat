@@ -26,4 +26,19 @@ interface ChatService {
     @GET("/messages/conversation/{conversationId}")
     suspend fun getMessages(@Path("conversationId") userId : String) : Response<ArrayList<Message>>
 
+    @GET("/friendships/list/{userId}")
+    suspend fun getFriends(@Path("userId") userId: String): Response<ArrayList<User>>
+
+    @POST("/friendships/request/{userId}/{friendId}/{send_or_accept}")
+    suspend fun friendRequest(
+        @Path("userId") userId: String,
+        @Path("friendId") friendId: String,
+        @Path("send_or_accept") param: String,
+    ): Response<Unit>
+
+    @GET("/friendships/pending-sent/{userId}")
+    suspend fun getPendingFriendRequests(@Path("userId") userId: String): Response<ArrayList<User>>
+
+    @GET("/friendships/conversations/{user_id}")
+    suspend fun getFriendConversations(@Path("user_id") userId : String) : Response<ArrayList<ChatCardData>>
 }

@@ -3,44 +3,35 @@ package com.himanshu.whatsapp.ui.theme.screens
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.himanshu.whatsapp.ui.theme.components.ChatCard
+import com.himanshu.whatsapp.ui.theme.components.TextComposable
 import com.himanshu.whatsapp.ui.theme.nav.Screen
 import com.himanshu.whatsapp.ui.theme.viewmodels.ConversationsViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ConversationScreen(navController: NavController, modifier: Modifier) {
+fun ConversationScreen(navController: NavController) {
 
     val viewModel = hiltViewModel<ConversationsViewModel>()
     val uiState = viewModel.uiState.collectAsState().value
     val userId = navController.previousBackStackEntry?.savedStateHandle?.get<String>("userId")
     val conversation = uiState.matchingConversation
 
-    LaunchedEffect(Unit) {
-        userId?.let { viewModel.getConversations(userId = userId) }
-    }
-
     LaunchedEffect(conversation) {
-        if (conversation.conversationId.isNotEmpty()){
+        if (conversation.conversationId.isNotEmpty()) {
             navController.currentBackStackEntry?.savedStateHandle?.set("chatData", conversation)
             navController.currentBackStackEntry?.savedStateHandle?.set("isRandom", true)
             navController.currentBackStackEntry?.savedStateHandle?.set("userId", userId)
@@ -48,41 +39,25 @@ fun ConversationScreen(navController: NavController, modifier: Modifier) {
         }
     }
 
-
-    Box(modifier = Modifier.fillMaxSize()) {
-
-        if(uiState.isLoading){
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ){
-                CircularProgressIndicator()
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        if (uiState.isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(50.dp),
+            )
+        } else {
+            Button(
+                onClick = { viewModel.connectToSocketAndSubscribe(userId.orEmpty()) },
+                modifier = Modifier.size(140.dp),
+            ) {
+                TextComposable(
+                    "Match",
+                    fontSize = 25.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
-        }
-
-        LazyColumn(
-            modifier = Modifier.fillMaxSize()
-        ) {
-
-            item { Spacer(modifier = Modifier.fillMaxWidth().height(40.dp)) }
-
-            items(uiState.conversations) { chatItem ->
-                ChatCard(chatItem) { chat ->
-                    navController.currentBackStackEntry?.savedStateHandle?.set("chatData", chat)
-                    navController.currentBackStackEntry?.savedStateHandle?.set("userId", userId)
-                    navController.navigate("${Screen.ChatDetail.route}/${chat.conversationId}")
-                }
-            }
-        }
-
-        Button(
-            onClick = { viewModel.connectToSocketAndSubscribe(userId.orEmpty()) },
-            modifier = Modifier
-                .alpha(if (uiState.isLoading) 0f else 1f)
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 66.dp)
-        ) {
-            Text("Match")
         }
     }
 }

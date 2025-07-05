@@ -42,6 +42,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.himanshu.whatsapp.data.repository.UserDataStore
 import com.himanshu.whatsapp.ui.theme.components.VerticalSpacer
+import com.himanshu.whatsapp.ui.theme.nav.Screen
 import com.himanshu.whatsapp.ui.theme.viewmodels.UserViewModel
 
 @Composable
@@ -59,7 +60,7 @@ fun OnboardingScreen(
     LaunchedEffect(uiState.value.user) {
         if(uiState.value.user != null){
             navController.currentBackStackEntry?.savedStateHandle?.set("userId", uiState.value.user!!.deviceId)
-            navController.navigate("conversations"){
+            navController.navigate(Screen.Conversations.route){
 //                popUpTo(navController.graph.startDestinationId) { inclusive = true }
             }
         }

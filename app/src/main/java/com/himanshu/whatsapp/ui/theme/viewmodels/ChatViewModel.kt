@@ -2,6 +2,8 @@ package com.himanshu.whatsapp.ui.theme.viewmodels
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.himanshu.whatsapp.data.repository.ChatRepository
@@ -38,6 +40,15 @@ class ChatViewModel @Inject constructor(
 
     private val _uiState = mutableStateOf(ChatUIState())
     val uiState : State<ChatUIState> = _uiState
+
+    private val _isRequestLoading = MutableLiveData<Boolean>()
+    val isRequestLoading: LiveData<Boolean> = _isRequestLoading
+
+    private val _requestSuccess = MutableLiveData<Boolean>()
+    val requestSuccess: LiveData<Boolean> = _requestSuccess
+
+    private val _error = MutableLiveData<String?>()
+    val error: LiveData<String?> = _error
 
     fun addMessage(message: Message) {
         val currentMessages = _uiState.value.messages.toMutableList()
@@ -122,6 +133,29 @@ class ChatViewModel @Inject constructor(
             }
         } else {
             sendTypingStatus(senderId, conversationId, isTyping = false)
+        }
+    }
+
+
+    fun sendFriendRequest(userId: String, friendId: String) {
+        viewModelScope.launch {
+            _isRequestLoading.value = true
+            _error.value = null
+
+            try {
+                val response = chatRepository.sendFriendRequest(userId, friendId)
+                if (response.isSuccessful) {
+                    _requestSuccess.value = true
+                } else {
+                    _error.value = "Failed to send friend request: ${response.code()}"
+                    _requestSuccess.value = false
+                }
+            } catch (e: Exception) {
+                _error.value = "Error: ${e.message}"
+                _requestSuccess.value = false
+            } finally {
+                _isRequestLoading.value = false
+            }
         }
     }
 }

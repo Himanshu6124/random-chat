@@ -5,9 +5,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -28,8 +26,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.createGraph
 import com.himanshu.whatsapp.ui.theme.screens.ChatScreen
 import com.himanshu.whatsapp.ui.theme.screens.ConversationScreen
+import com.himanshu.whatsapp.ui.theme.screens.FriendsScreen
 import com.himanshu.whatsapp.ui.theme.screens.OnboardingScreen
 import com.himanshu.whatsapp.ui.theme.screens.SplashScreen
+import com.himanshu.whatsapp.ui.theme.screens.StatusScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -44,10 +44,9 @@ fun BottomNavigation(navController: NavHostController, modifier: Modifier) {
             )
         }
 
-        composable(route = Screen.Conversations.route) {backStackEntry->
+        composable(route = Screen.Conversations.route) {
             ConversationScreen(
-                navController = navController,
-                modifier = modifier
+                navController = navController
             )
         }
 
@@ -62,11 +61,15 @@ fun BottomNavigation(navController: NavHostController, modifier: Modifier) {
                 modifier = modifier
             )
         }
-        composable(route = Screen.Call.route) {
-            CallScreen()
+        composable(route = Screen.Friends.route) {
+            FriendsScreen(
+                navController = navController
+            )
         }
         composable(route = Screen.Status.route) {
-            StatusScreen()
+            StatusScreen(
+                navController = navController
+            )
         }
     }
 
@@ -77,34 +80,11 @@ fun BottomNavigation(navController: NavHostController, modifier: Modifier) {
 }
 
 
-
-@Composable
-fun CallScreen() {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text("Call Screen")
-    }
-}
-
-@Composable
-fun StatusScreen() {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text("Status Screen")
-    }
-}
-
 @Composable
 fun BottomBar(navController: NavHostController) {
     val destinations = arrayOf(
         Screen.Home.route,
-        Screen.Call.route,
+        Screen.Friends.route,
         Screen.Status.route,
     )
     var selectedItemIndex by remember { mutableIntStateOf(0) }

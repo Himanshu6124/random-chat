@@ -67,7 +67,10 @@ fun ChatCard(chat: ChatCardData, onClick : (ChatCardData)-> Unit) {
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Normal
             )
-            TextComposable(text = chat.lastMessage)
+
+            if( !chat.lastMessage.isNullOrEmpty()){
+                TextComposable(text = chat.lastMessage)
+            }
         }
 
         Spacer(modifier = Modifier.weight(1f))
@@ -84,11 +87,11 @@ data class ChatCardData(
     val friendUserId: String = "",
     val isTyping : Boolean= false,
     val photoUrl: String = "",
-    val lastMessage: String = "",
+    val lastMessage: String? = "",
     val isByYou : Boolean = false,
-    val messageStatus : String = "SENT",
-    val lastMessageTime: String = "",
-    val messageType  :String = ""
+    val messageStatus : String? = "SENT",
+    val lastMessageTime: String? = "",
+    val messageType  :String? = ""
 ):Parcelable
 
 

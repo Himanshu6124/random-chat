@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material.icons.outlined.Call
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -28,7 +29,12 @@ import com.bumptech.glide.integration.compose.GlideImage
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun ChatScreenTopBar(chat: ChatCardData , isOnline : Boolean ,onBackPress: ()-> Unit) {
+fun ChatScreenTopBar(
+    chat: ChatCardData,
+    isOnline : Boolean,
+    onBackPress: ()-> Unit,
+    onAddFriend: ()-> Unit
+) {
 
     Column {
         Row(
@@ -67,6 +73,16 @@ fun ChatScreenTopBar(chat: ChatCardData , isOnline : Boolean ,onBackPress: ()-> 
             }
 
             Spacer(modifier = Modifier.weight(1f))
+
+            Icon(
+                imageVector = Icons.Outlined.AddCircle,
+                tint = Color.Black,
+                modifier = Modifier
+                    .padding(end = 20.dp)
+                    .size(30.dp)
+                    .clickable {onAddFriend()  },
+                contentDescription = "Friends"
+            )
 
             Icon(
                 imageVector = Icons.Outlined.Call,
