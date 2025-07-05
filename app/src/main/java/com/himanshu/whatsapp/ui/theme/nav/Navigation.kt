@@ -25,9 +25,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.createGraph
 import com.himanshu.whatsapp.ui.theme.screens.ChatScreen
-import com.himanshu.whatsapp.ui.theme.screens.ConversationScreen
 import com.himanshu.whatsapp.ui.theme.screens.FriendsScreen
-import com.himanshu.whatsapp.ui.theme.screens.OnboardingScreen
+import com.himanshu.whatsapp.ui.theme.screens.RandomMatchScreen
+import com.himanshu.whatsapp.ui.theme.screens.SignUpScreen
 import com.himanshu.whatsapp.ui.theme.screens.SplashScreen
 import com.himanshu.whatsapp.ui.theme.screens.StatusScreen
 
@@ -36,7 +36,7 @@ import com.himanshu.whatsapp.ui.theme.screens.StatusScreen
 fun BottomNavigation(navController: NavHostController, modifier: Modifier) {
 
     val navGraph = navController.createGraph(
-        startDestination = Screen.Home.route,
+        startDestination = Screen.SignUp.route,
     ) {
         composable(route = Screen.SplashScreen.route) {
             SplashScreen(
@@ -44,14 +44,14 @@ fun BottomNavigation(navController: NavHostController, modifier: Modifier) {
             )
         }
 
-        composable(route = Screen.Conversations.route) {
-            ConversationScreen(
+        composable(route = Screen.RandomMatch.route) {
+            RandomMatchScreen(
                 navController = navController
             )
         }
 
-        composable(route = Screen.Home.route) {
-            OnboardingScreen(
+        composable(route = Screen.SignUp.route) {
+            SignUpScreen(
                 navController = navController
             )
         }
@@ -83,9 +83,9 @@ fun BottomNavigation(navController: NavHostController, modifier: Modifier) {
 @Composable
 fun BottomBar(navController: NavHostController) {
     val destinations = arrayOf(
-        Screen.Home.route,
-        Screen.Friends.route,
-        Screen.Status.route,
+        Screen.RandomMatch,
+        Screen.Friends,
+        Screen.Status,
     )
     var selectedItemIndex by remember { mutableIntStateOf(0) }
 
@@ -97,15 +97,15 @@ fun BottomBar(navController: NavHostController) {
         horizontalArrangement = Arrangement.Absolute.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        destinations.forEachIndexed { index, route ->
+        destinations.forEachIndexed { index, screen ->
             Text(
-                text = route.replaceFirstChar { it.uppercaseChar() },
+                text = screen.name,
                 fontSize = 20.sp,
                 fontWeight = if (selectedItemIndex == index) FontWeight.Black else FontWeight.Light,
                 modifier = Modifier
                     .clickable {
                         selectedItemIndex = index
-                        navController.navigate(route = route)
+                        navController.navigate(route = screen.route)
                     }
             )
         }

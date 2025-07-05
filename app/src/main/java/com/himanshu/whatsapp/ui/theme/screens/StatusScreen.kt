@@ -16,8 +16,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -36,6 +39,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.himanshu.whatsapp.data.model.User
 import com.himanshu.whatsapp.ui.theme.viewmodels.FriendsViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatusScreen(
     navController: NavController
@@ -52,59 +56,70 @@ fun StatusScreen(
         friendsViewModel.getPendingFriendRequests(userId.orEmpty())
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = "Friends",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
+    LaunchedEffect(userId) {
+        friendsViewModel.getFriendsConversations(userId.orEmpty())
+    }
 
-        when {
-            isLoading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
-
-            error != null -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
                     Text(
-                        text = error ?: "Unknown error",
-                        color = MaterialTheme.colorScheme.error
+                        text = "Friends Requests",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold
                     )
                 }
-            }
-
-            pendingFriends.isEmpty() -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("No friends found")
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            when {
+                isLoading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
-            }
 
-            else -> {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(pendingFriends) { friend ->
-                        PendingFriendItem(friend = friend){
-                            friendsViewModel.acceptFriendRequest(
-                                userId = userId.orEmpty(),
-                                friendId = friend.deviceId
-                            )
+                error != null -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = error ?: "Unknown error",
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
+
+                pendingFriends.isEmpty() -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("No friends Requests found")
+                    }
+                }
+
+                else -> {
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(pendingFriends) { friend ->
+                            PendingFriendItem(friend = friend) {
+                                friendsViewModel.acceptFriendRequest(
+                                    userId = userId.orEmpty(),
+                                    friendId = friend.deviceId
+                                )
+                            }
                         }
                     }
                 }
@@ -133,7 +148,7 @@ fun PendingFriendItem(
 
             GlideImage(
                 model = friend.photoId,
-                modifier = Modifier.sizeIn(maxWidth = 24.dp , maxHeight = 24.dp),
+                modifier = Modifier.sizeIn(maxWidth = 24.dp, maxHeight = 24.dp),
                 contentDescription = "profile"
             )
 

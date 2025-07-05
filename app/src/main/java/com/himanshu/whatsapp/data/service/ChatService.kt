@@ -36,7 +36,7 @@ interface ChatService {
         @Path("send_or_accept") param: String,
     ): Response<Unit>
 
-    @GET("/friendships/pending-sent/{userId}")
+    @GET("/friendships/to-be-accepted/{userId}")
     suspend fun getPendingFriendRequests(@Path("userId") userId: String): Response<ArrayList<User>>
 
     @GET("/friendships/conversations/{user_id}")

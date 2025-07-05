@@ -23,11 +23,11 @@ import com.himanshu.whatsapp.ui.theme.viewmodels.ConversationsViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ConversationScreen(navController: NavController) {
+fun RandomMatchScreen(navController: NavController) {
 
     val viewModel = hiltViewModel<ConversationsViewModel>()
     val uiState = viewModel.uiState.collectAsState().value
-    val userId = navController.previousBackStackEntry?.savedStateHandle?.get<String>("userId")
+    val userId = viewModel.user.collectAsState().value?.deviceId
     val conversation = uiState.matchingConversation
 
     LaunchedEffect(conversation) {

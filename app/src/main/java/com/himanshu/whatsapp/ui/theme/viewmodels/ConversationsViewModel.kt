@@ -4,8 +4,10 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.himanshu.whatsapp.data.model.User
 import com.himanshu.whatsapp.data.repository.ChatRepository
 import com.himanshu.whatsapp.data.repository.StompRepository
+import com.himanshu.whatsapp.data.repository.UserDataStore
 import com.himanshu.whatsapp.ui.theme.viewmodels.uiStates.ConversationUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,8 +21,18 @@ import javax.inject.Inject
 @HiltViewModel
 class ConversationsViewModel @Inject constructor(
     private val chatRepository: ChatRepository,
-    private val stompRepository: StompRepository
+    private val stompRepository: StompRepository,
+    private val userDataStore: UserDataStore
 ) : ViewModel() {
+
+    private val _user = MutableStateFlow<User?>(null)
+    val user: StateFlow<User?> = _user
+
+    init {
+        viewModelScope.launch {
+            _user.value = userDataStore.getUser()
+        }
+    }
 
     private val _uiState = MutableStateFlow(ConversationUIState())
     val uiState: StateFlow<ConversationUIState> = _uiState

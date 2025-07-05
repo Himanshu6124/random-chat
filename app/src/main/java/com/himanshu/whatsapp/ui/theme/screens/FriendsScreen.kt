@@ -22,6 +22,7 @@ import com.himanshu.whatsapp.ui.theme.components.ChatCardData
 import com.himanshu.whatsapp.ui.theme.nav.Screen
 import com.himanshu.whatsapp.ui.theme.viewmodels.FriendsViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FriendsScreen(
     navController : NavController,
@@ -37,60 +38,68 @@ fun FriendsScreen(
         friendsViewModel.getFriendsConversations(userId.orEmpty())
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = "Friends",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        when {
-            isLoading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
-            error != null -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
                     Text(
-                        text = error ?: "Unknown error",
-                        color = MaterialTheme.colorScheme.error
+                        text = "Friends",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold
                     )
                 }
-            }
-            friends.isEmpty() -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("No friends found")
+            )
+        }
+    ){ paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+
+            when {
+                isLoading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
-            }
-            else -> {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(friends) { friend ->
-                        FriendItem(
-                            friend = friend,
-                            onClick = {
-                                navController.currentBackStackEntry?.savedStateHandle?.set("chatData", friend)
-                                navController.currentBackStackEntry?.savedStateHandle?.set("isRandom", false)
-                                navController.currentBackStackEntry?.savedStateHandle?.set("userId", userId)
-                                navController.navigate("${Screen.ChatDetail.route}/${friend.conversationId}")
-                            }
+                error != null -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = error ?: "Unknown error",
+                            color = MaterialTheme.colorScheme.error
                         )
+                    }
+                }
+                friends.isEmpty() -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("No friends found")
+                    }
+                }
+                else -> {
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(friends) { friend ->
+                            FriendItem(
+                                friend = friend,
+                                onClick = {
+                                    navController.currentBackStackEntry?.savedStateHandle?.set("chatData", friend)
+                                    navController.currentBackStackEntry?.savedStateHandle?.set("isRandom", false)
+                                    navController.currentBackStackEntry?.savedStateHandle?.set("userId", userId)
+                                    navController.navigate("${Screen.ChatDetail.route}/${friend.conversationId}")
+                                }
+                            )
+                        }
                     }
                 }
             }
