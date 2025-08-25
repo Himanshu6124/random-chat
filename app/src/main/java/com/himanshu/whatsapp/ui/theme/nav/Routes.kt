@@ -38,11 +38,4 @@ sealed interface Screen {
         override val name: String
             get() = "ChatDetail"
     }
-
-    data object SplashScreen : Screen {
-        override val route: String
-            get() = "splash"
-        override val name: String
-            get() = "SplashScreen"
-    }
 }

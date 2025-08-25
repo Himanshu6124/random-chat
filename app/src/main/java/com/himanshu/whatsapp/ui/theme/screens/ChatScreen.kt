@@ -46,7 +46,7 @@ fun ChatScreen(
     val userId = navController.previousBackStackEntry?.savedStateHandle?.get<String>("userId")
     val isRandomMatch = navController.previousBackStackEntry?.savedStateHandle?.get<Boolean>("isRandom") ?: false
     var inputText by remember { mutableStateOf("") }
-    val messages = viewModel.uiState.value.messages
+    val messages = viewModel.uiState.collectAsState().value.messages
     val isOnline = viewModel.isOnline.collectAsState()
     val isTyping = viewModel.isTyping.collectAsState()
     val listState = rememberLazyListState()

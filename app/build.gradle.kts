@@ -56,6 +56,8 @@ dependencies {
     implementation ("com.github.NaikSoftware:StompProtocolAndroid:1.6.6")
     implementation ("io.reactivex.rxjava2:rxjava:2.2.21")
     implementation ("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation(project(":login"))
+    implementation(project(":core"))
     implementation (libs.core.splashscreen)
     implementation (libs.converter.gson)
     implementation(libs.retrofit)

@@ -36,14 +36,8 @@ import com.himanshu.whatsapp.ui.theme.screens.StatusScreen
 fun BottomNavigation(navController: NavHostController, modifier: Modifier) {
 
     val navGraph = navController.createGraph(
-        startDestination = Screen.SignUp.route,
+        startDestination = Screen.RandomMatch.route,
     ) {
-        composable(route = Screen.SplashScreen.route) {
-            SplashScreen(
-                navController = navController
-            )
-        }
-
         composable(route = Screen.RandomMatch.route) {
             RandomMatchScreen(
                 navController = navController

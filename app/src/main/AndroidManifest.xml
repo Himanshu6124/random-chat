@@ -14,19 +14,26 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.WhatsApp.Splash">
+        android:theme="@style/Theme.WhatsApp.Splash"
         tools:targetApi="31">
+
         <activity
-            android:name=".MainActivity"
+            android:name="com.himanshu.whatsapp.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.WhatsApp">
+            android:theme="@style/Theme.WhatsApp.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name="com.himanshu.login.LoginActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.WhatsApp" />
     </application>
 
 </manifest>

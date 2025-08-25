@@ -15,7 +15,9 @@ import com.himanshu.whatsapp.ui.theme.viewmodels.uiStates.ChatUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,8 +40,8 @@ class ChatViewModel @Inject constructor(
     private val _isTyping = stompRepository.isTyping
     val isTyping = _isTyping
 
-    private val _uiState = mutableStateOf(ChatUIState())
-    val uiState : State<ChatUIState> = _uiState
+    private val _uiState = MutableStateFlow(ChatUIState())
+    val uiState : StateFlow<ChatUIState> = _uiState
 
     private val _isRequestLoading = MutableLiveData<Boolean>()
     val isRequestLoading: LiveData<Boolean> = _isRequestLoading
